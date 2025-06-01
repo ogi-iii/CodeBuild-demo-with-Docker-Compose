@@ -1,0 +1,6 @@
+services:
+  localstack:
+    image: localstack/localstack:4.4
+    container_name: mock-secretsmanager-container
+    ports:
+      - "4566:4566"
