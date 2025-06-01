@@ -6,6 +6,7 @@ from logging import getLogger
 
 import boto3
 from botocore.exceptions import ClientError
+from botocore.config import Config
 
 class SecretsManagerDriver:
     """
@@ -17,7 +18,9 @@ class SecretsManagerDriver:
             aws_access_key_id: str,
             aws_secret_access_key: str,
             region_name: str,
-            endpoint_url: str | None = None
+            endpoint_url: str | None = None,
+            connect_timeout = 10,
+            read_timeout = 10,
             ):
         """
         Secrets Manager クライアントを初期化する。
@@ -26,13 +29,19 @@ class SecretsManagerDriver:
         :param aws_secret_access_key: AWS シークレットアクセスキー
         :param region_name: Secrets Manager の接続先 AWS リージョン
         :param endpoint_url: Secrets Manager の接続先エンドポイント (default: None)
+        :param connect_timeout: Secrets Manager 接続タイムアウト秒数 (default: 10)
+        :param read_timeout: Secrets Manager からのデータ受信タイムアウト秒数 (default: 10)
         """
         self.client = boto3.client(
             service_name='secretsmanager',
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
             region_name=region_name,
-            endpoint_url=endpoint_url
+            endpoint_url=endpoint_url,
+            config=Config(
+                connect_timeout=connect_timeout,
+                read_timeout=read_timeout
+            )
         )
         self.logger = getLogger(self.__class__.__name__)
 
