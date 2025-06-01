@@ -43,10 +43,7 @@ docker compose down
 # pull CodeBuild runtime container image
 docker pull public.ecr.aws/codebuild/amazonlinux-x86_64-standard:5.0
 # pull CodeBuild agent container image
-## of x86_64 version
 docker pull public.ecr.aws/codebuild/local-builds:latest
-## of ARM version
-docker pull public.ecr.aws/codebuild/local-builds:aarch64
 ```
 
 ### 2. Run the CodeBuild agent
