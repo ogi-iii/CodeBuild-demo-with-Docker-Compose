@@ -1,39 +1,27 @@
 version: 0.2
 
-env:
+env: # テストケース実行時の環境変数
   variables:
     AWS_ACCESS_KEY_ID: test
     AWS_SECRET_ACCESS_KEY: test
 
 phases:
-  install:
+  install: # テストケースの実行に必要な環境を構築
     runtime-versions:
       python: 3.13
     commands:
       - python -m pip install --upgrade pip
       - pip install -r requirements.txt
   pre_build:
-    commands:
+    commands: # 前回のビルドで立ち上げた検証用コンテナを再利用しないために環境をクリーンアップ
       - docker compose down
       - docker container prune -f
-      - docker network prune -f
   build:
     commands:
-      - docker compose up -d
-      - CUSTOM_NETWORK_NAME=$(head /dev/urandom | sha256sum | cut -c-50)
-      - docker network create -d bridge $CUSTOM_NETWORK_NAME
-      - SECRETSMANAGER_CONTAINER_NAME=$(docker ps --filter "name=mock-secretsmanager-container" --format "{{.Names}}")
-      - docker network connect $CUSTOM_NETWORK_NAME $SECRETSMANAGER_CONTAINER_NAME
-      - CODEBUILD_CONTAINER_NAME=$(docker ps --filter "ancestor=public.ecr.aws/codebuild/amazonlinux-x86_64-standard:5.0" --format "{{.Names}}")
-      - docker network connect $CUSTOM_NETWORK_NAME $CODEBUILD_CONTAINER_NAME
+      - docker compose up -d # Docker Compose で検証用コンテナを立ち上げる
       - docker container ls -a
-      - docker network ls
-      - docker inspect $CUSTOM_NETWORK_NAME
-      - find . -type f -name config.ini -exec sed -i "s/localhost/$SECRETSMANAGER_CONTAINER_NAME/g" {} +
-      - pytest
+      - pytest # Docker Compose で立ち上げた検証用コンテナに `localhost` で接続するテストケースを実行
   post_build:
-    commands:
+    commands: # ビルド終了時に環境をクリーンアップ
       - docker compose down
       - docker container prune -f
-      - docker network disconnect $CUSTOM_NETWORK_NAME $CODEBUILD_CONTAINER_NAME
-      - docker network prune -f
