@@ -20,7 +20,7 @@ phases:
     commands:
       - docker compose up -d # Docker Compose で検証用コンテナを立ち上げる
       - docker container ls -a
-      - pytest # Docker Compose で立ち上げた検証用コンテナに `localhost` で接続するテストケースを実行
+      - pytest # Docker Compose で立ち上げた検証用コンテナに `localhost` で接続するテストケースを実行: 接続エラーでビルドが失敗する
   post_build:
     commands: # ビルド終了時に環境をクリーンアップ
       - docker compose down
