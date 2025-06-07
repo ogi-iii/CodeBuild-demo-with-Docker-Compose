@@ -54,4 +54,4 @@ docker pull public.ecr.aws/codebuild/local-builds:latest
 
 ## See Also
 
-- [Web記事のタイトル](https://qiita.com/)
+- [【AWS CodeBuild】Docker Composeのコンテナに接続できない？ユーザ定義ネットワークで解決！ - Qiita](https://qiita.com/ogi-iii/items/b7397c00a2be5b1d0815)
